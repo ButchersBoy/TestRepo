@@ -1,0 +1,26 @@
+{
+  "name": "GitTrumps",
+  "version": "0.0.0",
+  "authors": [
+    "James Willock <james@dragablz.net>"
+  ],
+  "description": "Explore and play your way through GitHub's trending repositories",
+  "moduleType": [
+    "es6",
+    "node"
+  ],
+  "keywords": [
+    "git",
+    "javascript",
+    "play",
+    "trending"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
