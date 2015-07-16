@@ -9,7 +9,7 @@ var repoCache = require('./bin/repoCache.js');
 
 var routes = require('./routes/index');
 var core = require('./routes/core');
-//var api = require('./routes/api');
+var api = require('./routes/api');
 
 //var gitHub = require('./bin/gitHubLoader.js');
 
@@ -29,7 +29,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-//app.use('/api', api);
+app.use('/api', api);
 app.use('/*', core);
 
 // catch 404 and forward to error handler
