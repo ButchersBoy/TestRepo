@@ -29061,7 +29061,7 @@ React.render(
 );
 
 $.get("api/playCards", function(data) {
-	alert(data);
+	alert(data.length);
 });
 
 },{"./foo.js":158,"jquery":2,"react":157}]},{},[159]);

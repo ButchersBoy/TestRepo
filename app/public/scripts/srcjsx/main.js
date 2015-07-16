@@ -36,5 +36,5 @@ React.render(
 );
 
 $.get("api/playCards", function(data) {
-	alert(data);
+	alert(data.length);
 });

@@ -1,4 +1,6 @@
 var gitHubLoader = require('./gitHubLoader');
+
+console.log('Initialising repo cache.'); 
  
 var repos;
  
@@ -7,7 +9,7 @@ gitHubLoader.loader({
   pageLimit: 2,
   getListFunc: (function (body) { return body.items; })
   }).execute(function(error, response) {
-	  console.log('repo cache loaded ' + response.length);
+	  console.log('Repo cache loaded ' + response.length);
 	  repos = response.map(function(r) {
       return {
         id : r.id,
