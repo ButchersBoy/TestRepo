@@ -14,6 +14,7 @@ gitHubLoader.loader({
       return {
         id : r.id,
         full_name : r.full_name,
+        description : r.description,
         url : r.url,
         updated_at : r.updated_at,
         stargazers_count : r.stargazers_count,

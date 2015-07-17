@@ -3,6 +3,26 @@ html, body {
   margin: 0;
   padding: 0;
 }
+.octicon {
+    width: 16px;
+    height: 16px;
+    text-align: center;
+    vertical-align: middle;
+    margin-top: -4.5px;
+  }
+.mdl-card__actions > span {
+  vertical-align: middle;
+}
+.git-trumps-card-square.mdl-card {
+  width: 398px;
+  height: 320px;
+}
+.git-trumps-card-square > .mdl-card__title {
+  color: #fff;     
+}
+.git-trumps-card-square > .mdl-card__title {
+  color: #fff;     
+}
 .git-trumps .mdl-layout__header-row {
   padding-left: 40px;
   height: 53px;
