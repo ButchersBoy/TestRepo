@@ -74,20 +74,26 @@ var PlayerCard = React.createClass({
 	obscure: function(value) {
 		return this.props.obscure ? "?"  : value;
 	},
+	obscureTitle: function(value) {
+		return this.props.obscure ? "?/?"  : value;
+	},
 	handlePlay: function(item) {
 		this.props.onPlay(item);
 	},
+	handleDismissResult: function() {
+		this.props.onDismissResult();
+	},
 	render: function() {
-		var bgImgStyle = {background: 'url(' + this.props.repo.owner.avatar_url + ') center / cover'}
-		return (			
-			<div className="mdl-cell mdl-cell--6-col">
-				<div className="mdl-card mdl-shadow--2dp play-card" style={bgImgStyle}>
-					<div className="play-card-content">
+		var bgImgStyle = { background: 'url(' + this.props.repo.owner.avatar_url + ') center / cover' }
+		var content;
+		if (this.props.playResult == null)
+			content = (
+				<div className="play-card-content">
 						<div className="mdl-card__title mdl-card--expand">
 							<h5 className="mdl-card__title-text">{this.props.title}</h5>
 						</div>
 					  	<div className="mdl-card__title mdl-card--expand">
-					  		<h5 className="mdl-card__subtitle-text">{this.props.repo.full_name}</h5>
+					  		<h5 className="mdl-card__subtitle-text">{this.obscureTitle(this.props.repo.full_name)}</h5>
 					  	</div>
 					  	<div className="mdl-card__supporting-text">	
 					  		{this.props.repo.description}				  			    
@@ -99,31 +105,19 @@ var PlayerCard = React.createClass({
 			                <PlayerCardDataRow icon="octicon-issue-opened" description="Issues" value={this.obscure(this.props.repo.open_issues_count)} onClick={this.handlePlay.bind(this, "Issues")} />
 			                <PlayerCardDataRow icon="octicon-repo-push" description="Updated" value={this.obscure(Common.formatDate(this.props.repo.updated_at))} onClick={this.handlePlay.bind(this, "Updated")} />
 						</div>
-					</div>
+					</div>			
+			);
+		else
+			content = (<div onClick={this.handleDismissResult}>win</div>);
+		return (			
+			<div className="mdl-cell mdl-cell--6-col">
+				<div className="mdl-card mdl-shadow--2dp play-card" style={bgImgStyle}>
+					 {content}
 				</div>
 			</div>			
 		);		
 	}
 });
-
-var clickHandler = function response() {
-	console.log('u clicked');
-}
-
-
-
-
-
-/*
-React.render(
-	<div>	
-		<h5>Hello, world how are you?!</h5>
-		<MdlRaisedButton content={'ballz'} onClick={clickHandler} />
-	</div>,
-	document.getElementById('reactResult')
-);
-*/
-
 
 var PlayArea = React.createClass({
 	loadRepos: function() {
@@ -138,23 +132,26 @@ var PlayArea = React.createClass({
 					repos: data,
 					playerRepo: data[nextRepo++],  
 					cpuRepo: data[nextRepo++],
-					nextRepo: nextRepo
+					nextRepo: nextRepo					
 				});
 			}
 		}.bind(this));
 	},
-	playHandler: function(item) {
-		console.log(item);
+	playHandler: function(item) {				
+		this.setState({mode: 'reveal', playResult: 1});				
+	},
+	dismissResultHandler: function() {
 		var nextRepo = this.state.nextRepo;
 		this.setState({
 			playerRepo: this.state.repos[nextRepo++],  
 			cpuRepo: this.state.repos[nextRepo++],
-			nextRepo: nextRepo
+			nextRepo: nextRepo,
+			mode: 'play', 
+			playResult: null
 		});
-		console.log("moved");
 	},
 	getInitialState: function() {
-		return {playerRepo: null,  cpuRepo: null, repos: null, nextRepo: 0};
+		return {playerRepo: null,  cpuRepo: null, repos: null, nextRepo: 0, mode:'play'};
 	},
 	componentDidMount: function() {
 		this.loadRepos();
@@ -167,8 +164,8 @@ var PlayArea = React.createClass({
 		else
 			return (
 				<section className="section--center mdl-grid">
-					<PlayerCard repo={this.state.playerRepo} title="Player 1" onPlay={this.playHandler} />
-					<PlayerCard repo={this.state.cpuRepo} title="CPU" obscure={true}  />
+					<PlayerCard repo={this.state.playerRepo} title="Player 1" onPlay={this.playHandler} playResult={this.state.playResult} onDismissResult={this.dismissResultHandler} />
+					<PlayerCard repo={this.state.cpuRepo} title="CPU" obscure={this.state.mode=='play'}  />
 				</section>	
 			);
 	}
@@ -178,26 +175,3 @@ React.render(
 	<PlayArea />,
 	document.getElementById('playArea')
 );
-/*
-$.get("api/playCards", function(data) {
-	
-	if (data.length < 2)
-		//TODO handle error#
-		console.log("no cards!");
-	else
-	{
-		var i = 10;
-			React.render(
-			<PlayerCard repo={data[i++]} title="P1"  />,
-			document.getElementById('playerCardPlace')
-		);		
-		React.render(
-			<PlayerCard repo={data[i++]} title="CPU" obscure={true}  />,
-			document.getElementById('cpuCardPlace')
-		);
-
-	}
-	
-	console.log('loaded ' + data.length);
-});
-*/

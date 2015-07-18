@@ -29107,20 +29107,26 @@ var PlayerCard = React.createClass({displayName: "PlayerCard",
 	obscure: function(value) {
 		return this.props.obscure ? "?"  : value;
 	},
+	obscureTitle: function(value) {
+		return this.props.obscure ? "?/?"  : value;
+	},
 	handlePlay: function(item) {
 		this.props.onPlay(item);
 	},
+	handleDismissResult: function() {
+		this.props.onDismissResult();
+	},
 	render: function() {
-		var bgImgStyle = {background: 'url(' + this.props.repo.owner.avatar_url + ') center / cover'}
-		return (			
-			React.createElement("div", {className: "mdl-cell mdl-cell--6-col"}, 
-				React.createElement("div", {className: "mdl-card mdl-shadow--2dp play-card", style: bgImgStyle}, 
-					React.createElement("div", {className: "play-card-content"}, 
+		var bgImgStyle = { background: 'url(' + this.props.repo.owner.avatar_url + ') center / cover' }
+		var content;
+		if (this.props.playResult == null)
+			content = (
+				React.createElement("div", {className: "play-card-content"}, 
 						React.createElement("div", {className: "mdl-card__title mdl-card--expand"}, 
 							React.createElement("h5", {className: "mdl-card__title-text"}, this.props.title)
 						), 
 					  	React.createElement("div", {className: "mdl-card__title mdl-card--expand"}, 
-					  		React.createElement("h5", {className: "mdl-card__subtitle-text"}, this.props.repo.full_name)
+					  		React.createElement("h5", {className: "mdl-card__subtitle-text"}, this.obscureTitle(this.props.repo.full_name))
 					  	), 
 					  	React.createElement("div", {className: "mdl-card__supporting-text"}, 	
 					  		this.props.repo.description				  			    
@@ -29132,31 +29138,19 @@ var PlayerCard = React.createClass({displayName: "PlayerCard",
 			                React.createElement(PlayerCardDataRow, {icon: "octicon-issue-opened", description: "Issues", value: this.obscure(this.props.repo.open_issues_count), onClick: this.handlePlay.bind(this, "Issues")}), 
 			                React.createElement(PlayerCardDataRow, {icon: "octicon-repo-push", description: "Updated", value: this.obscure(Common.formatDate(this.props.repo.updated_at)), onClick: this.handlePlay.bind(this, "Updated")})
 						)
-					)
+					)			
+			);
+		else
+			content = (React.createElement("div", {onClick: this.handleDismissResult}, "win"));
+		return (			
+			React.createElement("div", {className: "mdl-cell mdl-cell--6-col"}, 
+				React.createElement("div", {className: "mdl-card mdl-shadow--2dp play-card", style: bgImgStyle}, 
+					 content
 				)
 			)			
 		);		
 	}
 });
-
-var clickHandler = function response() {
-	console.log('u clicked');
-}
-
-
-
-
-
-/*
-React.render(
-	<div>	
-		<h5>Hello, world how are you?!</h5>
-		<MdlRaisedButton content={'ballz'} onClick={clickHandler} />
-	</div>,
-	document.getElementById('reactResult')
-);
-*/
-
 
 var PlayArea = React.createClass({displayName: "PlayArea",
 	loadRepos: function() {
@@ -29171,23 +29165,26 @@ var PlayArea = React.createClass({displayName: "PlayArea",
 					repos: data,
 					playerRepo: data[nextRepo++],  
 					cpuRepo: data[nextRepo++],
-					nextRepo: nextRepo
+					nextRepo: nextRepo					
 				});
 			}
 		}.bind(this));
 	},
-	playHandler: function(item) {
-		console.log(item);
+	playHandler: function(item) {				
+		this.setState({mode: 'reveal', playResult: 1});				
+	},
+	dismissResultHandler: function() {
 		var nextRepo = this.state.nextRepo;
 		this.setState({
 			playerRepo: this.state.repos[nextRepo++],  
 			cpuRepo: this.state.repos[nextRepo++],
-			nextRepo: nextRepo
+			nextRepo: nextRepo,
+			mode: 'play', 
+			playResult: null
 		});
-		console.log("moved");
 	},
 	getInitialState: function() {
-		return {playerRepo: null,  cpuRepo: null, repos: null, nextRepo: 0};
+		return {playerRepo: null,  cpuRepo: null, repos: null, nextRepo: 0, mode:'play'};
 	},
 	componentDidMount: function() {
 		this.loadRepos();
@@ -29200,8 +29197,8 @@ var PlayArea = React.createClass({displayName: "PlayArea",
 		else
 			return (
 				React.createElement("section", {className: "section--center mdl-grid"}, 
-					React.createElement(PlayerCard, {repo: this.state.playerRepo, title: "Player 1", onPlay: this.playHandler}), 
-					React.createElement(PlayerCard, {repo: this.state.cpuRepo, title: "CPU", obscure: true})
+					React.createElement(PlayerCard, {repo: this.state.playerRepo, title: "Player 1", onPlay: this.playHandler, playResult: this.state.playResult, onDismissResult: this.dismissResultHandler}), 
+					React.createElement(PlayerCard, {repo: this.state.cpuRepo, title: "CPU", obscure: this.state.mode=='play'})
 				)	
 			);
 	}
@@ -29211,27 +29208,5 @@ React.render(
 	React.createElement(PlayArea, null),
 	document.getElementById('playArea')
 );
-/*
-$.get("api/playCards", function(data) {
-	
-	if (data.length < 2)
-		//TODO handle error#
-		console.log("no cards!");
-	else
-	{
-		var i = 10;
-			React.render(
-			<PlayerCard repo={data[i++]} title="P1"  />,
-			document.getElementById('playerCardPlace')
-		);		
-		React.render(
-			<PlayerCard repo={data[i++]} title="CPU" obscure={true}  />,
-			document.getElementById('cpuCardPlace')
-		);
 
-	}
-	
-	console.log('loaded ' + data.length);
-});
-*/
 },{"../src/common.js":158,"jquery":2,"react":157}]},{},[159]);
