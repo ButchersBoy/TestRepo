@@ -37,7 +37,7 @@ var MdlFlatButton = React.createClass({displayName: "MdlFlatButton",
 });
 
 
-
+//TODO obsolete
 var VoteButton = React.createClass({displayName: "VoteButton",
 	handleClick: function() {
 		this.props.onClick();	
@@ -56,9 +56,12 @@ var VoteButton = React.createClass({displayName: "VoteButton",
 });
 
 var PlayerCardDataRow = React.createClass({displayName: "PlayerCardDataRow",
+	handleClick: function() {
+		this.props.onClick();	
+	},
 	render: function() {
 		return (
-			React.createElement("div", {className: "play-card-attribute-set mdl-button mdl-js-button mdl-js-ripple-effect"}, 
+			React.createElement("div", {className: "play-card-attribute-set mdl-button mdl-js-button mdl-js-ripple-effect", onClick: this.handleClick}, 
 				React.createElement("div", {className: "play-card-attribute-icon"}, React.createElement("span", {className: "octicon " + this.props.icon})), 
 				React.createElement("div", {className: "play-card-attribute-description"}, this.props.description), 										
 				React.createElement("div", {className: "play-card-attribute-value"}, this.props.value)		
@@ -68,6 +71,12 @@ var PlayerCardDataRow = React.createClass({displayName: "PlayerCardDataRow",
 });
 
 var PlayerCard = React.createClass({displayName: "PlayerCard",
+	obscure: function(value) {
+		return this.props.obscure ? "?"  : value;
+	},
+	handlePlay: function(item) {
+		this.props.onPlay(item);
+	},
 	render: function() {
 		var bgImgStyle = {background: 'url(' + this.props.repo.owner.avatar_url + ') center / cover'}
 		return (			
@@ -79,15 +88,15 @@ var PlayerCard = React.createClass({displayName: "PlayerCard",
 				  	React.createElement("div", {className: "mdl-card__title mdl-card--expand"}, 
 				  		React.createElement("h5", {className: "mdl-card__subtitle-text"}, this.props.repo.full_name)
 				  	), 
-				  	React.createElement("div", {className: "mdl-card__supporting-text"}, 
+				  	React.createElement("div", {className: "mdl-card__supporting-text"}, 	
 				  		this.props.repo.description				  			    
 				  	), 				
 				  	React.createElement("div", {className: "play-card-attributes"}, 
-		                React.createElement(PlayerCardDataRow, {icon: "octicon-star", description: "Stars", value: this.props.repo.stargazers_count}), 
-		                React.createElement(PlayerCardDataRow, {icon: "octicon-eye", description: "Watchers", value: this.props.repo.watchers_count}), 
-		                React.createElement(PlayerCardDataRow, {icon: "octicon-repo-forked", description: "Forks", value: this.props.repo.forks_count}), 
-		                React.createElement(PlayerCardDataRow, {icon: "octicon-issue-opened", description: "Issues", value: this.props.repo.open_issues_count}), 
-		                React.createElement(PlayerCardDataRow, {icon: "octicon-repo-push", description: "Updated", value: Common.formatDate(this.props.repo.updated_at)})
+		                React.createElement(PlayerCardDataRow, {icon: "octicon-star", description: "Stars", value: this.obscure(this.props.repo.stargazers_count), onClick: this.handlePlay.bind(this, "Stars")}), 
+		                React.createElement(PlayerCardDataRow, {icon: "octicon-eye", description: "Watchers", value: this.obscure(this.props.repo.watchers_count), onClick: this.handlePlay.bind(this, "Watchers")}), 
+		                React.createElement(PlayerCardDataRow, {icon: "octicon-repo-forked", description: "Forks", value: this.obscure(this.props.repo.forks_count), onClick: this.handlePlay.bind(this, "Forks")}), 
+		                React.createElement(PlayerCardDataRow, {icon: "octicon-issue-opened", description: "Issues", value: this.obscure(this.props.repo.open_issues_count), onClick: this.handlePlay.bind(this, "Issues")}), 
+		                React.createElement(PlayerCardDataRow, {icon: "octicon-repo-push", description: "Updated", value: this.obscure(Common.formatDate(this.props.repo.updated_at)), onClick: this.handlePlay.bind(this, "Updated")})
 					)
 				)
 			)			
@@ -113,6 +122,11 @@ React.render(
 );
 */
 
+
+
+
+
+
 $.get("api/playCards", function(data) {
 	
 	if (data.length < 2)
@@ -120,14 +134,16 @@ $.get("api/playCards", function(data) {
 		console.log("no cards!");
 	else
 	{
-		React.render(
-			React.createElement(PlayerCard, {repo: data[0], title: "P1"}),
+		var i = 10;
+			React.render(
+			React.createElement(PlayerCard, {repo: data[i++], title: "P1"}),
 			document.getElementById('playerCardPlace')
 		);		
 		React.render(
-			React.createElement(PlayerCard, {repo: data[1], title: "CPU"}),
+			React.createElement(PlayerCard, {repo: data[i++], title: "CPU", obscure: true}),
 			document.getElementById('cpuCardPlace')
 		);
+
 	}
 	
 	console.log('loaded ' + data.length);

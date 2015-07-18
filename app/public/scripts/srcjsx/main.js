@@ -37,7 +37,7 @@ var MdlFlatButton = React.createClass({
 });
 
 
-
+//TODO obsolete
 var VoteButton = React.createClass({
 	handleClick: function() {
 		this.props.onClick();	
@@ -56,9 +56,12 @@ var VoteButton = React.createClass({
 });
 
 var PlayerCardDataRow = React.createClass({
+	handleClick: function() {
+		this.props.onClick();	
+	},
 	render: function() {
 		return (
-			<div className="play-card-attribute-set mdl-button mdl-js-button mdl-js-ripple-effect">
+			<div className="play-card-attribute-set mdl-button mdl-js-button mdl-js-ripple-effect" onClick={this.handleClick}>
 				<div className="play-card-attribute-icon"><span className={"octicon " + this.props.icon} ></span></div>
 				<div className="play-card-attribute-description">{this.props.description}</div>										
 				<div className="play-card-attribute-value">{this.props.value}</div>		
@@ -68,6 +71,12 @@ var PlayerCardDataRow = React.createClass({
 });
 
 var PlayerCard = React.createClass({
+	obscure: function(value) {
+		return this.props.obscure ? "?"  : value;
+	},
+	handlePlay: function(item) {
+		this.props.onPlay(item);
+	},
 	render: function() {
 		var bgImgStyle = {background: 'url(' + this.props.repo.owner.avatar_url + ') center / cover'}
 		return (			
@@ -79,15 +88,15 @@ var PlayerCard = React.createClass({
 				  	<div className="mdl-card__title mdl-card--expand">
 				  		<h5 className="mdl-card__subtitle-text">{this.props.repo.full_name}</h5>
 				  	</div>
-				  	<div className="mdl-card__supporting-text">
+				  	<div className="mdl-card__supporting-text">	
 				  		{this.props.repo.description}				  			    
 				  	</div>				
 				  	<div className="play-card-attributes">
-		                <PlayerCardDataRow icon="octicon-star" description="Stars" value={this.props.repo.stargazers_count} />
-		                <PlayerCardDataRow icon="octicon-eye" description="Watchers" value={this.props.repo.watchers_count} />
-		                <PlayerCardDataRow icon="octicon-repo-forked" description="Forks" value={this.props.repo.forks_count} />
-		                <PlayerCardDataRow icon="octicon-issue-opened" description="Issues" value={this.props.repo.open_issues_count} />
-		                <PlayerCardDataRow icon="octicon-repo-push" description="Updated" value={Common.formatDate(this.props.repo.updated_at)} />
+		                <PlayerCardDataRow icon="octicon-star" description="Stars" value={this.obscure(this.props.repo.stargazers_count)} onClick={this.handlePlay.bind(this, "Stars")} />
+		                <PlayerCardDataRow icon="octicon-eye" description="Watchers" value={this.obscure(this.props.repo.watchers_count)} onClick={this.handlePlay.bind(this, "Watchers")} />
+		                <PlayerCardDataRow icon="octicon-repo-forked" description="Forks" value={this.obscure(this.props.repo.forks_count)} onClick={this.handlePlay.bind(this, "Forks")} />
+		                <PlayerCardDataRow icon="octicon-issue-opened" description="Issues" value={this.obscure(this.props.repo.open_issues_count)} onClick={this.handlePlay.bind(this, "Issues")} />
+		                <PlayerCardDataRow icon="octicon-repo-push" description="Updated" value={this.obscure(Common.formatDate(this.props.repo.updated_at))} onClick={this.handlePlay.bind(this, "Updated")} />
 					</div>
 				</div>
 			</div>			
@@ -113,6 +122,11 @@ React.render(
 );
 */
 
+
+
+
+
+
 $.get("api/playCards", function(data) {
 	
 	if (data.length < 2)
@@ -120,14 +134,16 @@ $.get("api/playCards", function(data) {
 		console.log("no cards!");
 	else
 	{
-		React.render(
-			<PlayerCard repo={data[0]} title="P1" />,
+		var i = 10;
+			React.render(
+			<PlayerCard repo={data[i++]} title="P1"  />,
 			document.getElementById('playerCardPlace')
 		);		
 		React.render(
-			<PlayerCard repo={data[1]} title="CPU" />,
+			<PlayerCard repo={data[i++]} title="CPU" obscure={true}  />,
 			document.getElementById('cpuCardPlace')
 		);
+
 	}
 	
 	console.log('loaded ' + data.length);
