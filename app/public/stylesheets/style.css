@@ -10,18 +10,44 @@ html, body {
     vertical-align: middle;
     margin-top: -4.5px;
   }
+.play-card-content {
+    background: rgba(0, 0, 0, 0.7);
+}
+.play-card-content {
+  color: #fff;
+} 
+
+.play-card-content .mdl-card__supporting-text {
+    color: inherit;
+}
+.play-card-content .mdl-card__subtitle-text {
+  color: inherit;
+}
+.play-card-attributes {
+  font-size: 13px;
+  margin: 16px;
+}
+.play-card-attribute-set {
+  clear:both;
+  color: #fff;
+  width: calc(100% - 16px);
+}
+.play-card-attribute-icon {
+  float:left
+}
+.play-card-attribute-description {
+  float:left;
+  margin-left:16px;
+  margin-right:16px;    
+}
+.play-card-attribute-value {
+  float:right
+}
 .mdl-card__actions > span {
   vertical-align: middle;
 }
-.git-trumps-card-square.mdl-card {
-  width: 398px;
-  height: 320px;
-}
-.git-trumps-card-square > .mdl-card__title {
-  color: #fff;     
-}
-.git-trumps-card-square > .mdl-card__title {
-  color: #fff;     
+.play-card-content > .mdl-card__title {
+  color: inherit;     
 }
 .git-trumps .mdl-layout__header-row {
   padding-left: 40px;
@@ -81,8 +107,8 @@ html, body {
 .git-trumps .mdl-card > * {
   height: auto;
 }
-.git-trumps .mdl-card .mdl-card__supporting-text {
-  margin: 40px;
+.mdl-card .mdl-card__supporting-text {
+  margin: 16px;
   -webkit-box-flex: 1;
   -webkit-flex-grow: 1;
       -ms-flex-positive: 1;

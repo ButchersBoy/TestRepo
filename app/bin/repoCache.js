@@ -20,7 +20,8 @@ gitHubLoader.loader({
         stargazers_count : r.stargazers_count,
         watchers_count : r.watchers_count,
         forks_count : r.forks_count,
-        open_issues_count : r.open_issues_count        
+        open_issues_count : r.open_issues_count,
+        owner : { avatar_url : r.owner.avatar_url }                
       };
     });    
   });

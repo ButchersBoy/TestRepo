@@ -29021,8 +29021,19 @@ module.exports = warning;
 module.exports = require('./lib/React');
 
 },{"./lib/React":30}],158:[function(require,module,exports){
+var formatDate = function(input){
+    var d = new Date(Date.parse(input));
+    var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var date = d.getDay() + " " + month[d.getMonth()] + ", " + d.getFullYear();
+    var time = d.toLocaleTimeString().toLowerCase().replace(/([\d]+:[\d]+):[\d]+(\s\w+)/g, "$1$2");
+    return (date + " " + time);  
+};
+
+module.exports = { formatDate: formatDate }
+},{}],159:[function(require,module,exports){
 var React = require('react');
 var $ = require('jquery');
+var Common = require('../src/common.js')
 
 var MdlRaisedButton = React.createClass({displayName: "MdlRaisedButton",
 	handleClick: function() {
@@ -29080,11 +29091,10 @@ var VoteButton = React.createClass({displayName: "VoteButton",
 var PlayerCardDataRow = React.createClass({displayName: "PlayerCardDataRow",
 	render: function() {
 		return (
-			React.createElement("tr", null, 
-				React.createElement("td", {className: "mdl-data-table__cell--non-numeric"}, React.createElement("span", {className: "octicon " + this.props.icon})), 
-				React.createElement("td", {className: "mdl-data-table__cell--non-numeric"}, this.props.description), 
-				React.createElement("td", null, this.props.value), 				
-				React.createElement("td", null, React.createElement(VoteButton, {icon: "octicon-thumbsup"}))
+			React.createElement("div", {className: "play-card-attribute-set mdl-button mdl-js-button mdl-js-ripple-effect"}, 
+				React.createElement("div", {className: "play-card-attribute-icon"}, React.createElement("span", {className: "octicon " + this.props.icon})), 
+				React.createElement("div", {className: "play-card-attribute-description"}, this.props.description), 										
+				React.createElement("div", {className: "play-card-attribute-value"}, this.props.value)		
 			)
 		);	
 	}
@@ -29092,25 +29102,26 @@ var PlayerCardDataRow = React.createClass({displayName: "PlayerCardDataRow",
 
 var PlayerCard = React.createClass({displayName: "PlayerCard",
 	render: function() {
-		return (
-			React.createElement("div", {className: "mdl-card mdl-shadow--2dp git-trumps-card-square"}, 
-			  React.createElement("div", {className: "mdl-card__title mdl-card--expand mdl-color--primary"}, 
-			    React.createElement("h5", {className: "mdl-card__title-text"}, this.props.title)				
-			  ), 
-			  React.createElement("div", {className: "mdl-card__title mdl-card--expand mdl-color--primary"}, 
-			  	React.createElement("h5", {className: "mdl-card__subtitle-text"}, this.props.repo.full_name)
-			  ), 
-			  React.createElement("div", {className: "mdl-card__supporting-text"}, 
-			  	this.props.repo.description				  			    
-			  ), 
-			  React.createElement("table", {className: "mdl-data-table mdl-js-data-table"}, 
-				  React.createElement("tbody", null, 
-				  	React.createElement(PlayerCardDataRow, {icon: "octicon-star", description: "Stars", value: this.props.repo.stargazers_count}), 
-					React.createElement(PlayerCardDataRow, {icon: "octicon-eye", description: "Watchers", value: this.props.repo.watchers_count}), 
-					React.createElement(PlayerCardDataRow, {icon: "octicon-repo-forked", description: "Forks", value: this.props.repo.forks_count}), 
-					React.createElement(PlayerCardDataRow, {icon: "octicon-issue-opened", description: "Issues", value: this.props.repo.open_issues_count}), 
-					React.createElement(PlayerCardDataRow, {icon: "octicon-repo-push", description: "Updated", value: this.props.repo.updated_at})
-				  )
+		var bgImgStyle = {background: 'url(' + this.props.repo.owner.avatar_url + ') center / cover'}
+		return (			
+			React.createElement("div", {className: "mdl-card mdl-shadow--2dp play-card", style: bgImgStyle}, 
+				React.createElement("div", {className: "play-card-content"}, 
+					React.createElement("div", {className: "mdl-card__title mdl-card--expand"}, 
+						React.createElement("h5", {className: "mdl-card__title-text"}, this.props.title)
+					), 
+				  	React.createElement("div", {className: "mdl-card__title mdl-card--expand"}, 
+				  		React.createElement("h5", {className: "mdl-card__subtitle-text"}, this.props.repo.full_name)
+				  	), 
+				  	React.createElement("div", {className: "mdl-card__supporting-text"}, 
+				  		this.props.repo.description				  			    
+				  	), 				
+				  	React.createElement("div", {className: "play-card-attributes"}, 
+		                React.createElement(PlayerCardDataRow, {icon: "octicon-star", description: "Stars", value: this.props.repo.stargazers_count}), 
+		                React.createElement(PlayerCardDataRow, {icon: "octicon-eye", description: "Watchers", value: this.props.repo.watchers_count}), 
+		                React.createElement(PlayerCardDataRow, {icon: "octicon-repo-forked", description: "Forks", value: this.props.repo.forks_count}), 
+		                React.createElement(PlayerCardDataRow, {icon: "octicon-issue-opened", description: "Issues", value: this.props.repo.open_issues_count}), 
+		                React.createElement(PlayerCardDataRow, {icon: "octicon-repo-push", description: "Updated", value: Common.formatDate(this.props.repo.updated_at)})
+					)
 				)
 			)			
 		);		
@@ -29155,4 +29166,4 @@ $.get("api/playCards", function(data) {
 	console.log('loaded ' + data.length);
 });
 
-},{"jquery":2,"react":157}]},{},[158]);
+},{"../src/common.js":158,"jquery":2,"react":157}]},{},[159]);

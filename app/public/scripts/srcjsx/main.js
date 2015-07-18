@@ -1,5 +1,6 @@
 var React = require('react');
 var $ = require('jquery');
+var Common = require('../src/common.js')
 
 var MdlRaisedButton = React.createClass({
 	handleClick: function() {
@@ -57,38 +58,38 @@ var VoteButton = React.createClass({
 var PlayerCardDataRow = React.createClass({
 	render: function() {
 		return (
-			<tr>
-				<td className="mdl-data-table__cell--non-numeric"><span className={"octicon " + this.props.icon} ></span></td>
-				<td className="mdl-data-table__cell--non-numeric">{this.props.description}</td>
-				<td>{this.props.value}</td>				
-				<td><VoteButton icon="octicon-thumbsup" /></td>
-			</tr>
+			<div className="play-card-attribute-set mdl-button mdl-js-button mdl-js-ripple-effect">
+				<div className="play-card-attribute-icon"><span className={"octicon " + this.props.icon} ></span></div>
+				<div className="play-card-attribute-description">{this.props.description}</div>										
+				<div className="play-card-attribute-value">{this.props.value}</div>		
+			</div>
 		);	
 	}
 });
 
 var PlayerCard = React.createClass({
 	render: function() {
-		return (
-			<div className="mdl-card mdl-shadow--2dp git-trumps-card-square">
-			  <div className="mdl-card__title mdl-card--expand mdl-color--primary">
-			    <h5 className="mdl-card__title-text">{this.props.title}</h5>				
-			  </div>
-			  <div className="mdl-card__title mdl-card--expand mdl-color--primary">
-			  	<h5 className="mdl-card__subtitle-text">{this.props.repo.full_name}</h5>
-			  </div>
-			  <div className="mdl-card__supporting-text">
-			  	{this.props.repo.description}				  			    
-			  </div>
-			  <table className="mdl-data-table mdl-js-data-table">
-				  <tbody>
-				  	<PlayerCardDataRow icon="octicon-star" description="Stars" value={this.props.repo.stargazers_count} />
-					<PlayerCardDataRow icon="octicon-eye" description="Watchers" value={this.props.repo.watchers_count} />
-					<PlayerCardDataRow icon="octicon-repo-forked" description="Forks" value={this.props.repo.forks_count} />
-					<PlayerCardDataRow icon="octicon-issue-opened" description="Issues" value={this.props.repo.open_issues_count} />
-					<PlayerCardDataRow icon="octicon-repo-push" description="Updated" value={this.props.repo.updated_at} />
-				  </tbody>
-				</table>
+		var bgImgStyle = {background: 'url(' + this.props.repo.owner.avatar_url + ') center / cover'}
+		return (			
+			<div className="mdl-card mdl-shadow--2dp play-card" style={bgImgStyle}>
+				<div className="play-card-content">
+					<div className="mdl-card__title mdl-card--expand">
+						<h5 className="mdl-card__title-text">{this.props.title}</h5>
+					</div>
+				  	<div className="mdl-card__title mdl-card--expand">
+				  		<h5 className="mdl-card__subtitle-text">{this.props.repo.full_name}</h5>
+				  	</div>
+				  	<div className="mdl-card__supporting-text">
+				  		{this.props.repo.description}				  			    
+				  	</div>				
+				  	<div className="play-card-attributes">
+		                <PlayerCardDataRow icon="octicon-star" description="Stars" value={this.props.repo.stargazers_count} />
+		                <PlayerCardDataRow icon="octicon-eye" description="Watchers" value={this.props.repo.watchers_count} />
+		                <PlayerCardDataRow icon="octicon-repo-forked" description="Forks" value={this.props.repo.forks_count} />
+		                <PlayerCardDataRow icon="octicon-issue-opened" description="Issues" value={this.props.repo.open_issues_count} />
+		                <PlayerCardDataRow icon="octicon-repo-push" description="Updated" value={Common.formatDate(this.props.repo.updated_at)} />
+					</div>
+				</div>
 			</div>			
 		);		
 	}
