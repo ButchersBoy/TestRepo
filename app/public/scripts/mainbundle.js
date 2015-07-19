@@ -29233,7 +29233,15 @@ var PlayArea = React.createClass({displayName: "PlayArea",
 		});
 	},
 	getInitialState: function() {
-		return {playerRepo: null,  cpuRepo: null, repos: null, nextRepo: 0, mode:'play'};
+		return {
+			playerRepo: null,  
+			cpuRepo: null, 
+			repos: null, 
+			nextRepo: 0, 
+			mode: 'play',
+			playerName: 'Player 1',
+			cpuName: 'CPU'
+			};
 	},
 	componentDidMount: function() {
 		this.loadRepos();
@@ -29246,8 +29254,8 @@ var PlayArea = React.createClass({displayName: "PlayArea",
 		else
 			return (
 				React.createElement("section", {className: "section--center mdl-grid"}, 
-					React.createElement(PlayerCard, {repo: this.state.playerRepo, title: "Player 1", onPlay: this.playHandler, playResult: this.state.playResult, onDismissResult: this.dismissResultHandler}), 
-					React.createElement(PlayerCard, {repo: this.state.cpuRepo, title: "CPU", obscure: this.state.mode=='play'})
+					React.createElement(PlayerCard, {repo: this.state.playerRepo, title: this.state.playerName, onPlay: this.playHandler, playResult: this.state.playResult, onDismissResult: this.dismissResultHandler}), 
+					React.createElement(PlayerCard, {repo: this.state.cpuRepo, title: this.state.cpuName, obscure: this.state.mode=='play'})
 				)	
 			);
 	}
