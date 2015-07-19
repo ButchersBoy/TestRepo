@@ -16,7 +16,6 @@ html, body {
 .play-card-content {
   color: #fff;
 } 
-
 .play-card-content .mdl-card__supporting-text {
     color: inherit;
 }
@@ -48,6 +47,14 @@ html, body {
 }
 .play-card-content > .mdl-card__title {
   color: inherit;     
+}
+.play-result-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 16px;
+}
+.play-result-icon path {
+  fill: #fff;
 }
 .git-trumps .mdl-layout__header-row {
   padding-left: 40px;

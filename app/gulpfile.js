@@ -12,7 +12,7 @@ gulp.task('hello', function() {
 gulp.task('jsx', function(cb) {    
   return gulp.src('./public/scripts/srcjsx/main.js')
     //TODO what is sourcemaps?
-    .pipe(react())
+    .pipe(react({harmony: true}))
     .pipe(gulp.dest('./public/scripts/src'))
   
   cb();

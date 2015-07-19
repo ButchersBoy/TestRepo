@@ -29103,7 +29103,46 @@ var PlayerCardDataRow = React.createClass({displayName: "PlayerCardDataRow",
 	}
 });
 
-var PlayerCard = React.createClass({displayName: "PlayerCard",
+var PlayResult = React.createClass({displayName: "PlayResult",
+	handleClick: function() {
+		this.props.onClick();	
+	},
+	render: function() {
+		var clr = {clear:'both'};
+		return (
+			React.createElement("div", {onClick: this.handleClick, className: "play-card-content"}, 
+				React.createElement("div", {className: "mdl-card__title mdl-card--expand"}, 
+					React.createElement("svg", {className: "play-result-icon", viewBox: "0 0 24 24"}, 
+						React.createElement("path", {
+							d: "M20.2,2H19.5H18C17.1,2 16,3 16,4H8C8,3 6.9,2 6,2H4.5H3.8H2V11C2,12 3,13 4,13H6.2C6.6,15 7.9,16.7 11,17V19.1C8.8,19.3 8,20.4 8,21.7V22H16V21.7C16,20.4 15.2,19.3 13,19.1V17C16.1,16.7 17.4,15 17.8,13H20C21,13 22,12 22,11V2H20.2M4,11V4H6V6V11C5.1,11 4.3,11 4,11M20,11C19.7,11 18.9,11 18,11V6V4H20V11Z"})	
+					), 
+					React.createElement("h5", {className: "mdl-card__title-text"}, "You WIN!")
+				), 
+				React.createElement("div", {className: "mdl-card__title mdl-card--expand"}, 
+					React.createElement("span", {className: "octicon octicon-star"}), 
+					React.createElement("h5", {className: "mdl-card__subtitle-text"}, "STARS:")
+				), 
+				React.createElement("div", {className: "mdl-card__supporting-text"}, 
+					React.createElement("div", null, 
+						React.createElement("h5", {className: "mdl-card__subtitle-text"}, "Player 1 : 6 DEC, 2013 14:15:13"), 
+						React.createElement("div", null, "ButchersBoy/MaterialDesignInXamlTookit")
+					)
+				), 
+				React.createElement("div", {className: "mdl-card__supporting-text"}, 
+					React.createElement("div", null, 
+						React.createElement("h5", {className: "mdl-card__subtitle-text"}, "CPU : 6 DEC, 2013 14:15:13"), 
+						React.createElement("div", null, "ButchersBoy/MaterialDesignInXamlTookit")
+					)
+				), 
+				React.createElement("div", {className: "mdl-card__supporting-text"}, 
+					"NEXT"
+				)
+			)	
+		);
+	}
+});
+
+var PlayActions = React.createClass({displayName: "PlayActions",
 	obscure: function(value) {
 		return this.props.obscure ? "?"  : value;
 	},
@@ -29113,35 +29152,45 @@ var PlayerCard = React.createClass({displayName: "PlayerCard",
 	handlePlay: function(item) {
 		this.props.onPlay(item);
 	},
+	render: function() {
+		return (
+			React.createElement("div", {className: "play-card-content"}, 
+				React.createElement("div", {className: "mdl-card__title mdl-card--expand"}, 
+					React.createElement("h5", {className: "mdl-card__title-text"}, this.props.title)
+				), 
+			  	React.createElement("div", {className: "mdl-card__title mdl-card--expand"}, 
+			  		React.createElement("h5", {className: "mdl-card__subtitle-text"}, this.obscureTitle(this.props.repo.full_name))
+			  	), 
+			  	React.createElement("div", {className: "mdl-card__supporting-text"}, 	
+			  		this.props.repo.description				  			    
+			  	), 				
+			  	React.createElement("div", {className: "play-card-attributes"}, 
+	                React.createElement(PlayerCardDataRow, {icon: "octicon-star", description: "Stars", value: this.obscure(this.props.repo.stargazers_count), onClick: this.handlePlay.bind(this, "Stars")}), 
+	                React.createElement(PlayerCardDataRow, {icon: "octicon-eye", description: "Watchers", value: this.obscure(this.props.repo.watchers_count), onClick: this.handlePlay.bind(this, "Watchers")}), 
+	                React.createElement(PlayerCardDataRow, {icon: "octicon-repo-forked", description: "Forks", value: this.obscure(this.props.repo.forks_count), onClick: this.handlePlay.bind(this, "Forks")}), 
+	                React.createElement(PlayerCardDataRow, {icon: "octicon-issue-opened", description: "Issues", value: this.obscure(this.props.repo.open_issues_count), onClick: this.handlePlay.bind(this, "Issues")}), 
+	                React.createElement(PlayerCardDataRow, {icon: "octicon-repo-push", description: "Updated", value: this.obscure(Common.formatDate(this.props.repo.updated_at)), onClick: this.handlePlay.bind(this, "Updated")})
+				)
+			)			
+		);
+	}
+})
+
+var PlayerCard = React.createClass({displayName: "PlayerCard",
+	handlePlay: function(item) {
+		this.props.onPlay(item);
+	},
 	handleDismissResult: function() {
 		this.props.onDismissResult();
 	},
 	render: function() {
 		var bgImgStyle = { background: 'url(' + this.props.repo.owner.avatar_url + ') center / cover' }
+		var $__0=     this.props,playResult=$__0.playResult,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{playResult:1});
 		var content;
 		if (this.props.playResult == null)
-			content = (
-				React.createElement("div", {className: "play-card-content"}, 
-						React.createElement("div", {className: "mdl-card__title mdl-card--expand"}, 
-							React.createElement("h5", {className: "mdl-card__title-text"}, this.props.title)
-						), 
-					  	React.createElement("div", {className: "mdl-card__title mdl-card--expand"}, 
-					  		React.createElement("h5", {className: "mdl-card__subtitle-text"}, this.obscureTitle(this.props.repo.full_name))
-					  	), 
-					  	React.createElement("div", {className: "mdl-card__supporting-text"}, 	
-					  		this.props.repo.description				  			    
-					  	), 				
-					  	React.createElement("div", {className: "play-card-attributes"}, 
-			                React.createElement(PlayerCardDataRow, {icon: "octicon-star", description: "Stars", value: this.obscure(this.props.repo.stargazers_count), onClick: this.handlePlay.bind(this, "Stars")}), 
-			                React.createElement(PlayerCardDataRow, {icon: "octicon-eye", description: "Watchers", value: this.obscure(this.props.repo.watchers_count), onClick: this.handlePlay.bind(this, "Watchers")}), 
-			                React.createElement(PlayerCardDataRow, {icon: "octicon-repo-forked", description: "Forks", value: this.obscure(this.props.repo.forks_count), onClick: this.handlePlay.bind(this, "Forks")}), 
-			                React.createElement(PlayerCardDataRow, {icon: "octicon-issue-opened", description: "Issues", value: this.obscure(this.props.repo.open_issues_count), onClick: this.handlePlay.bind(this, "Issues")}), 
-			                React.createElement(PlayerCardDataRow, {icon: "octicon-repo-push", description: "Updated", value: this.obscure(Common.formatDate(this.props.repo.updated_at)), onClick: this.handlePlay.bind(this, "Updated")})
-						)
-					)			
-			);
+			content = React.createElement(PlayActions, React.__spread({},  other));
 		else
-			content = (React.createElement("div", {onClick: this.handleDismissResult}, "win"));
+			content = React.createElement(PlayResult, {onClick: this.handleDismissResult, playResult: playResult});
 		return (			
 			React.createElement("div", {className: "mdl-cell mdl-cell--6-col"}, 
 				React.createElement("div", {className: "mdl-card mdl-shadow--2dp play-card", style: bgImgStyle}, 
