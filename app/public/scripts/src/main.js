@@ -120,6 +120,15 @@ var PlayActions = React.createClass({displayName: "PlayActions",
 		this.props.onPlay(item);
 	},
 	render: function() {
+		var attrRows = this.props.attrDefs.map(function(attrDef) {
+			return (
+				React.createElement(PlayerCardDataRow, {
+					icon: attrDef.icon, 
+					description: attrDef.description, 
+					value: this.obscure(eval("this.props.repo."+attrDef.property)), 
+					onClick: this.handlePlay.bind(this, attrDef.description)})
+			);
+		}.bind(this));
 		return (
 			React.createElement("div", {className: "play-card-content"}, 
 				React.createElement("div", {className: "mdl-card__title mdl-card--expand"}, 
@@ -132,11 +141,7 @@ var PlayActions = React.createClass({displayName: "PlayActions",
 			  		this.props.repo.description				  			    
 			  	), 				
 			  	React.createElement("div", {className: "play-card-attributes"}, 
-	                React.createElement(PlayerCardDataRow, {icon: "octicon-star", description: "Stars", value: this.obscure(this.props.repo.stargazers_count), onClick: this.handlePlay.bind(this, "Stars")}), 
-	                React.createElement(PlayerCardDataRow, {icon: "octicon-eye", description: "Watchers", value: this.obscure(this.props.repo.watchers_count), onClick: this.handlePlay.bind(this, "Watchers")}), 
-	                React.createElement(PlayerCardDataRow, {icon: "octicon-repo-forked", description: "Forks", value: this.obscure(this.props.repo.forks_count), onClick: this.handlePlay.bind(this, "Forks")}), 
-	                React.createElement(PlayerCardDataRow, {icon: "octicon-issue-opened", description: "Issues", value: this.obscure(this.props.repo.open_issues_count), onClick: this.handlePlay.bind(this, "Issues")}), 
-	                React.createElement(PlayerCardDataRow, {icon: "octicon-repo-push", description: "Updated", value: this.obscure(Common.formatDate(this.props.repo.updated_at)), onClick: this.handlePlay.bind(this, "Updated")})
+				 	attrRows
 				)
 			)			
 		);
@@ -187,7 +192,13 @@ var PlayArea = React.createClass({displayName: "PlayArea",
 		}.bind(this));
 	},
 	playHandler: function(item) {				
-		this.setState({mode: 'reveal', playResult: 1});				
+		this.setState({
+			mode: 'reveal', 
+			playResult: {
+				attribute: item,
+				
+			}
+		});				
 	},
 	dismissResultHandler: function() {
 		var nextRepo = this.state.nextRepo;
@@ -200,7 +211,23 @@ var PlayArea = React.createClass({displayName: "PlayArea",
 		});
 	},
 	getInitialState: function() {
+		
+		var attributeDefinitions = [
+			["Stars", "stargazers_count", "octicon-star"],
+			["Watchers", "watchers_count", "octicon-eye" ],
+			["Forks", "forks_count", "octicon-repo-forked"],
+			["Issues", "open_issues_count", "octicon-issue-opened"], 
+			["Updated", "updated_at", "octicon-repo-push"]
+		].map(function(item) {
+			return {
+				description: item[0],
+				property: item[1],
+				icon: item[2]
+			};
+		});
+		
 		return {
+			attributeDefinitions : attributeDefinitions,
 			playerRepo: null,  
 			cpuRepo: null, 
 			repos: null, 
@@ -221,8 +248,8 @@ var PlayArea = React.createClass({displayName: "PlayArea",
 		else
 			return (
 				React.createElement("section", {className: "section--center mdl-grid"}, 
-					React.createElement(PlayerCard, {repo: this.state.playerRepo, title: this.state.playerName, onPlay: this.playHandler, playResult: this.state.playResult, onDismissResult: this.dismissResultHandler}), 
-					React.createElement(PlayerCard, {repo: this.state.cpuRepo, title: this.state.cpuName, obscure: this.state.mode=='play'})
+					React.createElement(PlayerCard, {attrDefs: this.state.attributeDefinitions, repo: this.state.playerRepo, title: this.state.playerName, onPlay: this.playHandler, playResult: this.state.playResult, onDismissResult: this.dismissResultHandler}), 
+					React.createElement(PlayerCard, {attrDefs: this.state.attributeDefinitions, repo: this.state.cpuRepo, title: this.state.cpuName, obscure: this.state.mode=='play'})
 				)	
 			);
 	}
