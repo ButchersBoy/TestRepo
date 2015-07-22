@@ -70,12 +70,24 @@ var PlayerCardDataRow = React.createClass({displayName: "PlayerCardDataRow",
 	}
 });
 
+var PlayResultScoreItem = React.createClass({displayName: "PlayResultScoreItem",
+	render: function() {
+		return (
+			React.createElement("div", {className: "mdl-card__supporting-text"}, 
+				React.createElement("div", null, 
+					React.createElement("h5", {className: "mdl-card__subtitle-text"}, this.props.name, " : ", this.props.value), 
+					React.createElement("div", null, this.props.repoName)
+				)
+			)	
+		);
+	}
+});
+
 var PlayResult = React.createClass({displayName: "PlayResult",
 	handleClick: function() {
 		this.props.onClick();	
 	},
-	render: function() {
-		var clr = {clear:'both'};
+	render: function() {		
 		return (
 			React.createElement("div", {onClick: this.handleClick, className: "play-card-content"}, 
 				React.createElement("div", {className: "mdl-card__title mdl-card--expand"}, 
@@ -86,21 +98,11 @@ var PlayResult = React.createClass({displayName: "PlayResult",
 					React.createElement("h5", {className: "mdl-card__title-text"}, "You WIN!")
 				), 
 				React.createElement("div", {className: "mdl-card__title mdl-card--expand"}, 
-					React.createElement("span", {className: "octicon octicon-star"}), 
-					React.createElement("h5", {className: "mdl-card__subtitle-text"}, "STARS:")
+					React.createElement("span", {className: "octicon " + this.props.playResult.attributes.icon}), 
+					React.createElement("h5", {className: "mdl-card__subtitle-text play-result-attribute"}, this.props.playResult.attributes.description, " :")
 				), 
-				React.createElement("div", {className: "mdl-card__supporting-text"}, 
-					React.createElement("div", null, 
-						React.createElement("h5", {className: "mdl-card__subtitle-text"}, "Player 1 : 6 DEC, 2013 14:15:13"), 
-						React.createElement("div", null, "ButchersBoy/MaterialDesignInXamlTookit")
-					)
-				), 
-				React.createElement("div", {className: "mdl-card__supporting-text"}, 
-					React.createElement("div", null, 
-						React.createElement("h5", {className: "mdl-card__subtitle-text"}, "CPU : 6 DEC, 2013 14:15:13"), 
-						React.createElement("div", null, "ButchersBoy/MaterialDesignInXamlTookit")
-					)
-				), 
+				React.createElement(PlayResultScoreItem, {name: this.props.playResult.playerName, value: this.props.playResult.playerValue, repoName: this.props.playResult.playerRepoName}), 
+				React.createElement(PlayResultScoreItem, {name: this.props.playResult.cpuName, value: this.props.playResult.cpuValue, repoName: this.props.playResult.cpuRepoName}), 
 				React.createElement("div", {className: "mdl-card__supporting-text"}, 
 					"NEXT"
 				)
@@ -164,8 +166,8 @@ var PlayerCard = React.createClass({displayName: "PlayerCard",
 		else
 			content = React.createElement(PlayResult, {onClick: this.handleDismissResult, playResult: playResult});
 		return (			
-			React.createElement("div", {className: "mdl-cell mdl-cell--6-col"}, 
-				React.createElement("div", {className: "mdl-card mdl-shadow--2dp play-card", style: bgImgStyle}, 
+			React.createElement("div", {className: "mdl-cell mdl-cell--6-col play-card-cell"}, 
+				React.createElement("div", {className: "mdl-card mdl-shadow--2dp", style: bgImgStyle}, 
 					 content
 				)
 			)			
@@ -193,12 +195,20 @@ var PlayArea = React.createClass({displayName: "PlayArea",
 	},
 	playHandler: function(attributes) {
 		console.log("u played  "+ attributes.description);
-		console.log("your val  "+ eval("this.state.playerRepo."+attributes.property));				
+		var playerValue = eval("this.state.playerRepo."+attributes.property);
+		var cpuValue = eval("this.state.cpuRepo."+attributes.property);
+		var result = attributes.comparer(playerValue, cpuValue); 
 		this.setState({
 			mode: 'reveal', 
 			playResult: {
-				//attribute: item,
-				
+				attributes: attributes,
+				result: result, /* 1=p1 win, 0 = draw, -1=CPU win */
+				cpuName: this.state.cpuName,
+				cpuRepoName: this.state.cpuRepo.full_name,
+				cpuValue: cpuValue,
+				playerName: this.state.playerName,
+				playerRepoName: this.state.playerRepo.full_name,
+				playerValue: playerValue
 			}
 		});				
 	},
@@ -214,20 +224,30 @@ var PlayArea = React.createClass({displayName: "PlayArea",
 	},
 	getInitialState: function() {
 		
+		var compare = function (left,right) {
+			if (left > right) return 1;
+			if (left < right) return -1;
+			return 0;
+		};
+		var compareReverse = function (left,right) {
+			if (left > right) return -1;
+			if (left < right) return 1;
+			return 0;
+		} 		
 		var attributesSet = [
-			["Stars", "stargazers_count", "octicon-star"],
-			["Watchers", "watchers_count", "octicon-eye" ],
-			["Forks", "forks_count", "octicon-repo-forked"],
-			["Issues", "open_issues_count", "octicon-issue-opened"], 
-			["Updated", "updated_at", "octicon-repo-push"]
+			["Stars", "stargazers_count", "octicon-star", compare],
+			["Watchers", "watchers_count", "octicon-eye", compare],
+			["Forks", "forks_count", "octicon-repo-forked", compare],
+			["Issues", "open_issues_count", "octicon-issue-opened", compareReverse], 
+			["Updated", "updated_at", "octicon-repo-push", compare]
 		].map(function(item) {
 			return {
 				description: item[0],
 				property: item[1],
-				icon: item[2]
+				icon: item[2],
+				comparer: item[3]
 			};
-		});
-		
+		});		
 		return {
 			attributesSet : attributesSet,
 			playerRepo: null,  

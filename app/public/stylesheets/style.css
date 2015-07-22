@@ -3,13 +3,23 @@ html, body {
   margin: 0;
   padding: 0;
 }
+.mdl-layout__header-row h2 {
+  font-family: "Showcard Gothic", 'Helvetica', sans-serif;
+  margin-left: 8px;
+}
 .octicon {
     width: 16px;
     height: 16px;
     text-align: center;
     vertical-align: middle;
     margin-top: -4.5px;
-  }
+}
+.header-card {
+  min-height: 0px;
+}
+.play-card-cell {
+  margin: 0px 8px 8px 0px;
+}
 .play-card-content {
     background: rgba(0, 0, 0, 0.7);
 }
@@ -55,6 +65,11 @@ html, body {
 }
 .play-result-icon path {
   fill: #fff;
+}
+.play-result-attribute {
+  margin-left: 8px;
+  vertical-align: middle;
+  text-transform: uppercase;
 }
 .git-trumps .mdl-layout__header-row {
   padding-left: 40px;

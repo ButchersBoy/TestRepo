@@ -70,12 +70,24 @@ var PlayerCardDataRow = React.createClass({
 	}
 });
 
+var PlayResultScoreItem = React.createClass({
+	render: function() {
+		return (
+			<div className="mdl-card__supporting-text">
+				<div>
+					<h5 className="mdl-card__subtitle-text">{this.props.name} : {this.props.value}</h5>
+					<div>{this.props.repoName}</div>
+				</div>
+			</div>	
+		);
+	}
+});
+
 var PlayResult = React.createClass({
 	handleClick: function() {
 		this.props.onClick();	
 	},
-	render: function() {
-		var clr = {clear:'both'};
+	render: function() {		
 		return (
 			<div onClick={this.handleClick} className="play-card-content">
 				<div className="mdl-card__title mdl-card--expand">
@@ -86,21 +98,11 @@ var PlayResult = React.createClass({
 					<h5 className="mdl-card__title-text">You WIN!</h5>
 				</div>
 				<div className="mdl-card__title mdl-card--expand">
-					<span className={"octicon octicon-star"} ></span>
-					<h5 className="mdl-card__subtitle-text">STARS:</h5>
+					<span className={"octicon " + this.props.playResult.attributes.icon}></span>
+					<h5 className="mdl-card__subtitle-text play-result-attribute">{this.props.playResult.attributes.description} :</h5>
 				</div>
-				<div className="mdl-card__supporting-text">
-					<div>
-						<h5 className="mdl-card__subtitle-text">Player 1 : 6 DEC, 2013 14:15:13</h5>
-						<div>ButchersBoy/MaterialDesignInXamlTookit</div>
-					</div>
-				</div>
-				<div className="mdl-card__supporting-text">
-					<div>
-						<h5 className="mdl-card__subtitle-text">CPU : 6 DEC, 2013 14:15:13</h5>
-						<div>ButchersBoy/MaterialDesignInXamlTookit</div>
-					</div>
-				</div>
+				<PlayResultScoreItem name={this.props.playResult.playerName} value={this.props.playResult.playerValue} repoName={this.props.playResult.playerRepoName} />
+				<PlayResultScoreItem name={this.props.playResult.cpuName} value={this.props.playResult.cpuValue} repoName={this.props.playResult.cpuRepoName} />
 				<div className="mdl-card__supporting-text">
 					NEXT
 				</div>
@@ -164,8 +166,8 @@ var PlayerCard = React.createClass({
 		else
 			content = <PlayResult onClick={this.handleDismissResult} playResult={playResult} />;
 		return (			
-			<div className="mdl-cell mdl-cell--6-col">
-				<div className="mdl-card mdl-shadow--2dp play-card" style={bgImgStyle}>
+			<div className="mdl-cell mdl-cell--6-col play-card-cell">
+				<div className="mdl-card mdl-shadow--2dp" style={bgImgStyle}>
 					 {content}
 				</div>
 			</div>			
@@ -193,12 +195,20 @@ var PlayArea = React.createClass({
 	},
 	playHandler: function(attributes) {
 		console.log("u played  "+ attributes.description);
-		console.log("your val  "+ eval("this.state.playerRepo."+attributes.property));				
+		var playerValue = eval("this.state.playerRepo."+attributes.property);
+		var cpuValue = eval("this.state.cpuRepo."+attributes.property);
+		var result = attributes.comparer(playerValue, cpuValue); 
 		this.setState({
 			mode: 'reveal', 
 			playResult: {
-				//attribute: item,
-				
+				attributes: attributes,
+				result: result, /* 1=p1 win, 0 = draw, -1=CPU win */
+				cpuName: this.state.cpuName,
+				cpuRepoName: this.state.cpuRepo.full_name,
+				cpuValue: cpuValue,
+				playerName: this.state.playerName,
+				playerRepoName: this.state.playerRepo.full_name,
+				playerValue: playerValue
 			}
 		});				
 	},
@@ -214,20 +224,30 @@ var PlayArea = React.createClass({
 	},
 	getInitialState: function() {
 		
+		var compare = function (left,right) {
+			if (left > right) return 1;
+			if (left < right) return -1;
+			return 0;
+		};
+		var compareReverse = function (left,right) {
+			if (left > right) return -1;
+			if (left < right) return 1;
+			return 0;
+		} 		
 		var attributesSet = [
-			["Stars", "stargazers_count", "octicon-star"],
-			["Watchers", "watchers_count", "octicon-eye" ],
-			["Forks", "forks_count", "octicon-repo-forked"],
-			["Issues", "open_issues_count", "octicon-issue-opened"], 
-			["Updated", "updated_at", "octicon-repo-push"]
+			["Stars", "stargazers_count", "octicon-star", compare],
+			["Watchers", "watchers_count", "octicon-eye", compare],
+			["Forks", "forks_count", "octicon-repo-forked", compare],
+			["Issues", "open_issues_count", "octicon-issue-opened", compareReverse], 
+			["Updated", "updated_at", "octicon-repo-push", compare]
 		].map(function(item) {
 			return {
 				description: item[0],
 				property: item[1],
-				icon: item[2]
+				icon: item[2],
+				comparer: item[3]
 			};
-		});
-		
+		});		
 		return {
 			attributesSet : attributesSet,
 			playerRepo: null,  
