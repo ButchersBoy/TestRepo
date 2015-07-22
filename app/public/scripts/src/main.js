@@ -277,6 +277,22 @@ var PlayArea = React.createClass({displayName: "PlayArea",
 	}
 });
 
+var WinStreak = React.createClass({displayName: "WinStreak",	
+	render: function() {
+		var nodes = [];
+		for (var i = 0; i < this.props.value; i++)
+			nodes.push(React.createElement("span", null, "T"))
+		return (
+			React.createElement("div", null, nodes)	
+		);
+	}
+});
+
+React.render(
+	React.createElement(WinStreak, {value: 9}),
+	document.getElementById('winStreak')
+)
+
 React.render(
 	React.createElement(PlayArea, null),
 	document.getElementById('playArea')
