@@ -88,14 +88,30 @@ var PlayResult = React.createClass({displayName: "PlayResult",
 		this.props.onClick();	
 	},
 	render: function() {		
+		var summary;
+		switch (this.props.playResult.result) {
+			case -1:
+				summary = React.createElement("h5", {className: "mdl-card__title-text"}, "CPU Wins!");
+				break;
+			case 0:
+				summary = React.createElement("h5", {className: "mdl-card__title-text"}, "Draw!");
+				break;
+			case 1:
+				summary = (
+					React.createElement("div", null, 
+						React.createElement("svg", {className: "play-result-icon", viewBox: "0 0 24 24"}, 
+							React.createElement("path", {
+								d: "M20.2,2H19.5H18C17.1,2 16,3 16,4H8C8,3 6.9,2 6,2H4.5H3.8H2V11C2,12 3,13 4,13H6.2C6.6,15 7.9,16.7 11,17V19.1C8.8,19.3 8,20.4 8,21.7V22H16V21.7C16,20.4 15.2,19.3 13,19.1V17C16.1,16.7 17.4,15 17.8,13H20C21,13 22,12 22,11V2H20.2M4,11V4H6V6V11C5.1,11 4.3,11 4,11M20,11C19.7,11 18.9,11 18,11V6V4H20V11Z"})	
+						), 
+						React.createElement("h5", {className: "mdl-card__title-text"}, "You WIN!")
+					)					
+				);
+		};
+		
 		return (
-			React.createElement("div", {onClick: this.handleClick, className: "play-card-content"}, 
+			React.createElement("div", {className: "play-card-content"}, 
 				React.createElement("div", {className: "mdl-card__title mdl-card--expand"}, 
-					React.createElement("svg", {className: "play-result-icon", viewBox: "0 0 24 24"}, 
-						React.createElement("path", {
-							d: "M20.2,2H19.5H18C17.1,2 16,3 16,4H8C8,3 6.9,2 6,2H4.5H3.8H2V11C2,12 3,13 4,13H6.2C6.6,15 7.9,16.7 11,17V19.1C8.8,19.3 8,20.4 8,21.7V22H16V21.7C16,20.4 15.2,19.3 13,19.1V17C16.1,16.7 17.4,15 17.8,13H20C21,13 22,12 22,11V2H20.2M4,11V4H6V6V11C5.1,11 4.3,11 4,11M20,11C19.7,11 18.9,11 18,11V6V4H20V11Z"})	
-					), 
-					React.createElement("h5", {className: "mdl-card__title-text"}, "You WIN!")
+					summary
 				), 
 				React.createElement("div", {className: "mdl-card__title mdl-card--expand"}, 
 					React.createElement("span", {className: "octicon " + this.props.playResult.attributes.icon}), 
@@ -103,9 +119,7 @@ var PlayResult = React.createClass({displayName: "PlayResult",
 				), 
 				React.createElement(PlayResultScoreItem, {name: this.props.playResult.playerName, value: this.props.playResult.playerValue, repoName: this.props.playResult.playerRepoName}), 
 				React.createElement(PlayResultScoreItem, {name: this.props.playResult.cpuName, value: this.props.playResult.cpuValue, repoName: this.props.playResult.cpuRepoName}), 
-				React.createElement("div", {className: "mdl-card__supporting-text"}, 
-					"NEXT"
-				)
+				React.createElement(MdlFlatButton, {content: "NEXT", onClick: this.handleClick})
 			)	
 		);
 	}
@@ -194,10 +208,9 @@ var PlayArea = React.createClass({displayName: "PlayArea",
 		}.bind(this));
 	},
 	playHandler: function(attributes) {
-		console.log("u played  "+ attributes.description);
 		var playerValue = eval("this.state.playerRepo."+attributes.property);
 		var cpuValue = eval("this.state.cpuRepo."+attributes.property);
-		var result = attributes.comparer(playerValue, cpuValue); 
+		var result = attributes.comparer(playerValue, cpuValue);
 		this.setState({
 			mode: 'reveal', 
 			playResult: {

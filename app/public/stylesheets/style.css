@@ -58,6 +58,11 @@ html, body {
 .play-card-content > .mdl-card__title {
   color: inherit;     
 }
+.play-card-content > .mdl-button {
+  float: right;
+  margin: 0 8px 8px 0;
+  color: #fff;     
+}
 .play-result-icon {
   width: 24px;
   height: 24px;
