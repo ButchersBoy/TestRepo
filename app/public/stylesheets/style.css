@@ -71,6 +71,14 @@ html, body {
 .play-result-icon path {
   fill: #fff;
 }
+#winStreak .play-result-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+}
+#winStreak .play-result-icon path {
+  fill: black;
+}
 .play-result-attribute {
   margin-left: 8px;
   vertical-align: middle;
